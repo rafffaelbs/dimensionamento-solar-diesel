@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npx tsx *)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:5183/)",
+      "Bash(pkill -f \"vite.*5183\")",
+      "Bash(curl -s http://localhost:5183/ -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(npx playwright *)",
+      "Bash(node shot.mjs)"
+    ]
+  }
+}
