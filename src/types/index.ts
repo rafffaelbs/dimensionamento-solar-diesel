@@ -14,11 +14,6 @@ export interface HourlySolarCurve {
   trackerPct: number;
 }
 
-export interface ConsumptionPoint {
-  kw: number;
-  lh: number;
-}
-
 export interface GeneratorSpec {
   unitPowerKw: number;
   minLoadFactor: number;

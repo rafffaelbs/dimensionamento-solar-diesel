@@ -1,6 +1,5 @@
 import { CV_TO_KW, FULL_SUN_HOUR_INDEXES, LOW_SUN_HOUR_INDEXES } from '../data/constants';
 import type {
-  ConsumptionPoint,
   CurveSummary,
   CurveType,
   GeneratorSpec,
@@ -19,21 +18,8 @@ export function calcTotalLoadKw(loads: LoadItem[]): number {
     .reduce((sum, load) => sum + calcLoadKw(load), 0);
 }
 
-export function interpolateConsumption(table: ConsumptionPoint[], loadKw: number): number {
-  const first = table[0];
-  const last = table[table.length - 1];
-  if (loadKw <= first.kw) return first.lh;
-  if (loadKw >= last.kw) return last.lh;
-
-  for (let i = 0; i < table.length - 1; i++) {
-    const p1 = table[i];
-    const p2 = table[i + 1];
-    if (loadKw >= p1.kw && loadKw <= p2.kw) {
-      const fraction = (loadKw - p1.kw) / (p2.kw - p1.kw);
-      return p1.lh + fraction * (p2.lh - p1.lh);
-    }
-  }
-  return last.lh;
+export function calcGeneratorConsumption(loadKw: number): number {
+  return 0.00045411 * loadKw * loadKw + 0.0769035 * loadKw + 9;
 }
 
 export function calcHourResult(
@@ -42,7 +28,6 @@ export function calcHourResult(
   solarPct: number,
   installedSolarKw: number,
   generatorSpec: GeneratorSpec,
-  consumptionTable: ConsumptionPoint[],
 ): HourResult {
   const solarGeneratedKw = solarPct * installedSolarKw;
   const dieselNeededKw = totalLoadKw - solarGeneratedKw;
@@ -59,7 +44,7 @@ export function calcHourResult(
     loadPerGeneratorKw = Math.max(rawLoadPerGenerator, generatorSpec.minLoadKw);
   }
 
-  const unitConsumptionLh = interpolateConsumption(consumptionTable, loadPerGeneratorKw);
+  const unitConsumptionLh = calcGeneratorConsumption(loadPerGeneratorKw);
   const consumptionLh = unitConsumptionLh * numGenerators;
   const dieselOutputKw = loadPerGeneratorKw * numGenerators;
 
@@ -80,7 +65,6 @@ export function calcCurveResults(
   totalLoadKw: number,
   installedSolarKw: number,
   generatorSpec: GeneratorSpec,
-  consumptionTable: ConsumptionPoint[],
 ): HourResult[] {
   return hourlyCurves.map((curve) => {
     const solarPct = curveType === 'fixed' ? curve.fixedPct : curve.trackerPct;
@@ -90,7 +74,6 @@ export function calcCurveResults(
       solarPct,
       installedSolarKw,
       generatorSpec,
-      consumptionTable,
     );
   });
 }
