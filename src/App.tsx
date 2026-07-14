@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { LoadConfigTable } from './components/LoadConfigTable';
 import { SolarPowerInput } from './components/SolarPowerInput';
 import { OperationalCurveTable } from './components/OperationalCurveTable';
-import { CONSUMPTION_TABLE, GENERATOR_SPEC, HOURLY_SOLAR_CURVES, INITIAL_LOADS } from './data/constants';
+import { GENERATOR_SPEC, HOURLY_SOLAR_CURVES, INITIAL_LOADS } from './data/constants';
 import { calcCurveResults, calcSummary, calcTotalLoadKw } from './lib/calculations';
 import type { LoadItem } from './types';
 
@@ -12,6 +12,26 @@ function App() {
 
   const handleLoadChange = (id: string, patch: Partial<LoadItem>) => {
     setLoads((prev) => prev.map((load) => (load.id === id ? { ...load, ...patch } : load)));
+  };
+
+  const handleAddLoad = () => {
+    const newLoadId = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : Math.random().toString(36).substring(2, 9);
+    setLoads((prev) => [
+      ...prev,
+      {
+        id: newLoadId,
+        name: `Carga ${prev.length + 1}`,
+        powerCv: 100,
+        demandFactor: 1.0,
+        enabled: true,
+      },
+    ]);
+  };
+
+  const handleRemoveLoad = (id: string) => {
+    setLoads((prev) => prev.filter((load) => load.id !== id));
   };
 
   const totalLoadKw = useMemo(() => calcTotalLoadKw(loads), [loads]);
@@ -25,7 +45,6 @@ function App() {
         totalLoadKw,
         safeSolarKw,
         GENERATOR_SPEC,
-        CONSUMPTION_TABLE,
       ),
     [totalLoadKw, safeSolarKw],
   );
@@ -37,7 +56,6 @@ function App() {
         totalLoadKw,
         safeSolarKw,
         GENERATOR_SPEC,
-        CONSUMPTION_TABLE,
       ),
     [totalLoadKw, safeSolarKw],
   );
@@ -58,7 +76,12 @@ function App() {
       </header>
 
       <main className="mx-auto mt-6 flex w-full max-w-[1600px] flex-col gap-6 px-6">
-        <LoadConfigTable loads={loads} onChange={handleLoadChange} />
+        <LoadConfigTable
+          loads={loads}
+          onChange={handleLoadChange}
+          onAdd={handleAddLoad}
+          onRemove={handleRemoveLoad}
+        />
 
         <SolarPowerInput value={installedSolarKw} onChange={setInstalledSolarKw} />
 
