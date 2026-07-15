@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { LoadConfigTable } from './components/LoadConfigTable';
 import { SolarPowerInput } from './components/SolarPowerInput';
 import { OperationalCurveTable } from './components/OperationalCurveTable';
+import { ChartComponent, type ChartDataPoint } from './components/ChartComponent';
 import { GENERATOR_SPEC, HOURLY_SOLAR_CURVES, INITIAL_LOADS } from './data/constants';
 import {
   calcCurveResults,
@@ -83,6 +84,19 @@ function App() {
     [trackerResults, dieselOnlyConsumption, safeDieselPrice],
   );
 
+  const chartData: ChartDataPoint[] = useMemo(
+    () =>
+      fixedResults.map((fixedResult, index) => ({
+        hourLabel: fixedResult.hourLabel,
+        totalLoadKw: fixedResult.totalLoadKw,
+        fixedUsefulKw: fixedResult.usefulSolarKw,
+        fixedTotalKw: fixedResult.solarGeneratedKw,
+        trackerUsefulKw: trackerResults[index].usefulSolarKw,
+        trackerTotalKw: trackerResults[index].solarGeneratedKw,
+      })),
+    [fixedResults, trackerResults],
+  );
+
   return (
     <div className="min-h-screen bg-slate-50 pb-16 dark:bg-slate-950">
       <header className="border-b border-slate-200 bg-white px-6 py-5 dark:border-slate-800 dark:bg-slate-900">
@@ -130,6 +144,8 @@ function App() {
             />
           </div>
         </div>
+
+        <ChartComponent data={chartData} />
       </main>
     </div>
   );

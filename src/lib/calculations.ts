@@ -36,6 +36,13 @@ export function calcHourResult(
   generatorSpec: GeneratorSpec,
 ): HourResult {
   const solarGeneratedKw = solarPct * installedSolarKw;
+  // O gerador nunca desce abaixo de minLoadKw, então a solar não consegue
+  // "zerar" essa parcela — o que passar disso vira excedente sem uso.
+  const usefulSolarKw = Math.max(
+    0,
+    Math.min(solarGeneratedKw, totalLoadKw - generatorSpec.minLoadKw),
+  );
+  const excessSolarKw = Math.max(0, solarGeneratedKw - usefulSolarKw);
   const dieselNeededKw = totalLoadKw - solarGeneratedKw;
 
   let numGenerators: number;
@@ -58,6 +65,8 @@ export function calcHourResult(
     hourLabel,
     totalLoadKw,
     solarGeneratedKw,
+    usefulSolarKw,
+    excessSolarKw,
     dieselNeededKw,
     dieselOutputKw,
     numGenerators,
@@ -110,6 +119,7 @@ export function calcSummary(
   const lowSunConsumption = sumAt(LOW_SUN_HOUR_INDEXES);
   const totalDayConsumption = fullSunConsumption + lowSunConsumption;
   const savingsLiters = dieselOnlyConsumption - totalDayConsumption;
+  const dailyExcessKwh = hourResults.reduce((sum, result) => sum + result.excessSolarKw, 0);
 
   return {
     fullSunConsumption,
@@ -120,5 +130,6 @@ export function calcSummary(
     dieselOnlyCost: dieselOnlyConsumption * dieselPricePerLiter,
     savingsLiters,
     savingsReais: savingsLiters * dieselPricePerLiter,
+    dailyExcessKwh,
   };
 }

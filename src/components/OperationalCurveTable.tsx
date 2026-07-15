@@ -26,6 +26,7 @@ export function OperationalCurveTable({ title, hourResults, summary }: Operation
             <th className="py-2 pr-2 font-medium">Hora</th>
             <th className="py-2 pr-2 text-right font-medium">Carga Total (kW)</th>
             <th className="py-2 pr-2 text-right font-medium">Solar (kW)</th>
+            <th className="py-2 pr-2 text-right font-medium">Excedente (kW)</th>
             <th className="py-2 pr-2 text-right font-medium">Diesel (kW)</th>
             <th className="py-2 pr-2 text-right font-medium">Nº ger.</th>
             <th className="py-2 pl-2 text-right font-medium">Consumo (L/h)</th>
@@ -42,7 +43,18 @@ export function OperationalCurveTable({ title, hourResults, summary }: Operation
                 {kwFormatter.format(row.totalLoadKw)}
               </td>
               <td className="py-1.5 pr-2 text-right tabular-nums text-slate-700 dark:text-slate-300">
-                {kwFormatter.format(row.solarGeneratedKw)}
+                {kwFormatter.format(row.usefulSolarKw)}
+              </td>
+              <td className="py-1.5 pr-2 text-right tabular-nums">
+                {row.excessSolarKw > 0 ? (
+                  <span className="inline-block rounded bg-green-100 px-1.5 py-0.5 font-medium text-green-800 dark:bg-green-950/40 dark:text-green-400">
+                    {kwFormatter.format(row.excessSolarKw)}
+                  </span>
+                ) : (
+                  <span className="text-slate-400 dark:text-slate-600">
+                    {kwFormatter.format(row.excessSolarKw)}
+                  </span>
+                )}
               </td>
               <td className="py-1.5 pr-2 text-right tabular-nums text-slate-700 dark:text-slate-300">
                 {kwFormatter.format(row.dieselOutputKw)}

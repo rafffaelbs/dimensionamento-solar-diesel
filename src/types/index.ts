@@ -27,6 +27,8 @@ export interface HourResult {
   hourLabel: string;
   totalLoadKw: number;
   solarGeneratedKw: number;
+  usefulSolarKw: number;
+  excessSolarKw: number;
   dieselNeededKw: number;
   dieselOutputKw: number;
   numGenerators: number;
@@ -43,4 +45,5 @@ export interface CurveSummary {
   dieselOnlyCost: number;
   savingsLiters: number;
   savingsReais: number;
+  dailyExcessKwh: number;
 }

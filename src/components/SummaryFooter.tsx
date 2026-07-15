@@ -37,6 +37,8 @@ export function SummaryFooter({ summary }: SummaryFooterProps) {
   const formatValue = (value: number, unit: Unit) =>
     unit === 'R$' ? currencyFormatter.format(value) : `${lhFormatter.format(value)} L`;
 
+  const formatKwh = (value: number) => `${lhFormatter.format(value)} kWh`;
+
   return (
     <dl className="mt-3 divide-y divide-slate-200 border-t border-slate-200 text-sm dark:divide-slate-800 dark:border-slate-800">
       {consumptionRows.map((row) => (
@@ -83,6 +85,14 @@ export function SummaryFooter({ summary }: SummaryFooterProps) {
           </dd>
         </div>
       ))}
+      <div className="flex items-center justify-between gap-4 py-2">
+        <dt className="font-bold text-amber-700 dark:text-amber-400">
+          Potencial de Armazenamento em Baterias (Excedente Diário)
+        </dt>
+        <dd className="whitespace-nowrap font-bold tabular-nums text-amber-700 dark:text-amber-400">
+          {formatKwh(summary.dailyExcessKwh)}
+        </dd>
+      </div>
     </dl>
   );
 }
