@@ -4,12 +4,15 @@ export interface LoadItem {
   powerCv: number;
   demandFactor: number;
   enabled: boolean;
+  horaInicio: number;
+  horaFim: number;
 }
 
 export type CurveType = 'fixed' | 'tracker';
 
 export interface HourlySolarCurve {
   hourLabel: string;
+  hour: number;
   fixedPct: number;
   trackerPct: number;
 }
@@ -22,6 +25,7 @@ export interface GeneratorSpec {
 
 export interface HourResult {
   hourLabel: string;
+  totalLoadKw: number;
   solarGeneratedKw: number;
   dieselNeededKw: number;
   dieselOutputKw: number;
@@ -34,4 +38,9 @@ export interface CurveSummary {
   fullSunConsumption: number;
   lowSunConsumption: number;
   totalDayConsumption: number;
+  dieselOnlyConsumption: number;
+  totalCostSolar: number;
+  dieselOnlyCost: number;
+  savingsLiters: number;
+  savingsReais: number;
 }

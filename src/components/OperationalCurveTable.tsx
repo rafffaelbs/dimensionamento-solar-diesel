@@ -24,6 +24,7 @@ export function OperationalCurveTable({ title, hourResults, summary }: Operation
         <thead>
           <tr className="border-b border-slate-200 text-left text-slate-500 dark:border-slate-700 dark:text-slate-400">
             <th className="py-2 pr-2 font-medium">Hora</th>
+            <th className="py-2 pr-2 text-right font-medium">Carga Total (kW)</th>
             <th className="py-2 pr-2 text-right font-medium">Solar (kW)</th>
             <th className="py-2 pr-2 text-right font-medium">Diesel (kW)</th>
             <th className="py-2 pr-2 text-right font-medium">Nº ger.</th>
@@ -37,6 +38,9 @@ export function OperationalCurveTable({ title, hourResults, summary }: Operation
               className="border-b border-slate-100 last:border-0 dark:border-slate-800"
             >
               <td className="py-1.5 pr-2 text-slate-800 dark:text-slate-200">{row.hourLabel}</td>
+              <td className="py-1.5 pr-2 text-right tabular-nums text-slate-700 dark:text-slate-300">
+                {kwFormatter.format(row.totalLoadKw)}
+              </td>
               <td className="py-1.5 pr-2 text-right tabular-nums text-slate-700 dark:text-slate-300">
                 {kwFormatter.format(row.solarGeneratedKw)}
               </td>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { LoadItem } from '../types';
 import { calcLoadKw } from '../lib/calculations';
+import { OPERATING_HOURS } from '../data/constants';
 
 interface LoadConfigTableProps {
   loads: LoadItem[];
@@ -96,7 +97,7 @@ export function LoadConfigTable({ loads, onChange, onAdd, onRemove }: LoadConfig
           ) : (
             <>
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[600px] table-fixed border-collapse text-sm">
+                <table className="w-full min-w-[800px] table-fixed border-collapse text-sm">
                   <thead>
                     <tr className="border-b border-slate-200 text-left text-slate-500 dark:border-slate-700 dark:text-slate-400">
                       <th className="w-14 py-2 pr-2 font-medium">Ativa</th>
@@ -104,6 +105,8 @@ export function LoadConfigTable({ loads, onChange, onAdd, onRemove }: LoadConfig
                       <th className="w-32 py-2 pr-2 text-right font-medium">Potência (CV)</th>
                       <th className="w-32 py-2 pr-2 text-right font-medium">Fator de demanda</th>
                       <th className="w-28 py-2 pl-2 text-right font-medium">kW</th>
+                      <th className="w-24 py-2 pl-2 text-center font-medium">Hora Início</th>
+                      <th className="w-24 py-2 pl-2 text-center font-medium">Hora Fim</th>
                       <th className="w-16 py-2 text-center font-medium">Ações</th>
                     </tr>
                   </thead>
@@ -151,6 +154,34 @@ export function LoadConfigTable({ loads, onChange, onAdd, onRemove }: LoadConfig
                         </td>
                         <td className="py-2 pl-2 text-right tabular-nums text-slate-700 dark:text-slate-300">
                           {numberFormatter.format(calcLoadKw(load))}
+                        </td>
+                        <td className="py-2 pl-2 text-center">
+                          <select
+                            value={load.horaInicio}
+                            onChange={(e) => onChange(load.id, { horaInicio: Number(e.target.value) })}
+                            className="w-full rounded border border-slate-300 bg-white px-2 py-1 text-center dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+                            aria-label={`Hora início de ${load.name}`}
+                          >
+                            {OPERATING_HOURS.map((hour) => (
+                              <option key={hour} value={hour}>
+                                {String(hour).padStart(2, '0')}h
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="py-2 pl-2 text-center">
+                          <select
+                            value={load.horaFim}
+                            onChange={(e) => onChange(load.id, { horaFim: Number(e.target.value) })}
+                            className="w-full rounded border border-slate-300 bg-white px-2 py-1 text-center dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+                            aria-label={`Hora fim de ${load.name}`}
+                          >
+                            {OPERATING_HOURS.map((hour) => (
+                              <option key={hour} value={hour}>
+                                {String(hour).padStart(2, '0')}h
+                              </option>
+                            ))}
+                          </select>
                         </td>
                         <td className="py-2 text-center">
                           <button
